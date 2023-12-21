@@ -1,3 +1,6 @@
+"""The base file Module"""
+# models/base.py
+
 class Base:
     """The base class"""
     __nb_objects = 0
