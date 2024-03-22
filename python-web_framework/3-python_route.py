@@ -1,42 +1,30 @@
-"""
-Flask web application with four routes.
-"""
-
-from flask import Flask, escape
-
+'''import flask server'''
+from flask import Flask
 app = Flask(__name__)
 
-@app.route('/', strict_slashes=False)
-def hello_hbnb():
-    """
-    Route that displays "Hello HBNB!".
-    """
-    return 'Hello HBNB!'
+        
+@app.route("/",strict_slashes=False)
 
-@app.route('/hbnb', strict_slashes=False)
-def display_hbnb():
-    """
-    Route that displays "HBNB".
-    """
-    return 'HBNB'
+def Hello_HBNB():
+    return "Hello HBNB!"
 
-@app.route('/c/<text>', strict_slashes=False)
-def display_c(text):
-    """
-    Route that displays "C " followed by the value of the text variable.
-    Replace underscore _ symbols with a space.
-    """
-    return 'C {}'.format(escape(text.replace('_', ' ')))
+@app.route("/hbnb")
+def HBNB():
+    return "HBNB"
 
-@app.route('/python/<text>', strict_slashes=False)
-@app.route('/python', strict_slashes=False)
-def display_python(text='is cool'):
-    """
-    Route that displays "Python " followed by the value of the text variable.
-    Replace underscore _ symbols with a space.
-    Default value of text is "is cool".
-    """
-    return 'Python {}'.format(escape(text.replace('_', ' ')))
+@app.route("/c/<text>")
+def khadija(text):
+    formated_text = text.replace("_", " ")
+    return "C {}".format(formated_text)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    #return f"C {formated_text}" 
+
+@app.route("/python/<text>")
+@app.route("/python/")
+def python_text(text = "is cool"):
+    formated_text = text.replace("_", " ")
+    return "Python {}".format(formated_text)
+    
+    
+if __name__=="__main__":
+    app.run(host='0.0.0.0',port=5000)
