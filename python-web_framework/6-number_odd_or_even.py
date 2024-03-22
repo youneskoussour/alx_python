@@ -1,58 +1,48 @@
 
-"""
-Flask Application
-
-This script defines a Flask web application with various routes.
-
-Routes:
-- /: display "Hello HBNB!"
-- /hbnb: display "HBNB"
-- /c/<text>: display "C ", followed by the value of the text variable (replace underscore _ symbols with a space)
-- /python/<text>: display "Python ", followed by the value of the text variable (replace underscore _ symbols with a space)
-- /number/<n>: display "n is a number" only if n is an integer
-- /number_template/<n>: display a HTML page only if n is an integer with H1 tag: "Number: n" inside the tag BODY
-- /number_odd_or_even/<n>: display a HTML page only if n is an integer with H1 tag: "Number: n is even|odd" inside the tag BODY
-
-The application listens on 0.0.0.0, port 5000.
-
-Usage:
-    Run the script, and the Flask application will start.
-
-"""
-
+'''import flask server'''
 from flask import Flask, render_template
 
 app = Flask(__name__)
-app.url_map.strict_slashes = False
 
-@app.route('/')
-def hello_hbnb():
-    return 'Hello HBNB!'
+        
+@app.route("/",strict_slashes=False)
 
-@app.route('/hbnb')
-def hbnb():
-    return 'HBNB'
+def Hello_HBNB():
+    return "Hello HBNB!"
 
-@app.route('/c/<text>')
-def c(text):
-    return 'C {}'.format(text.replace('_', ' '))
+@app.route("/hbnb")
+def HBNB():
+    return "HBNB"
 
-@app.route('/python/')
-@app.route('/python/<text>')
-def python(text='is cool'):
-    return 'Python {}'.format(text.replace('_', ' '))
+@app.route("/c/<text>")
+def khadija(text):
+    formated_text = text.replace("_", " ")
+    return "C {}".format(formated_text)
 
-@app.route('/number/<int:n>')
-def number(n):
-    return '{} is a number'.format(n)
+'''return f"C {formated_text}'''
 
-@app.route('/number_template/<int:n>')
-def number_template(n):
-    return render_template('5-number.html', number=n)
+@app.route("/python/<text>")
+@app.route("/python/")
+def python_text(text = "is cool"):
+    formated_text = text.replace("_", " ")
+    return "Python {}".format(formated_text)
 
-@app.route('/number_odd_or_even/<int:n>')
+@app.route("/number/<int:n>")
+def python_integer(n):
+    return "{} is a number".format(n)
+
+@app.route("/number_template/<int:n>")
+def pythone_int(n):
+    return render_template("5-number.html", num = n)
+'''Determine if the 
+number is even or odd
+'''
+@app.route('/number_odd_or_even/<int:n>',strict_slashes=False)
 def number_odd_or_even(n):
-    return render_template('6-number_odd_or_even.html', number=n)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    odd_even = "even" if n % 2 == 0 else "odd"
+    return render_template('6-number_odd_or_even.html', n=n, odd_even=odd_even)
+    
+'''return render_template("6-number_odd_or_even.html", num = n)'''
+    
+if __name__=="__main__":
+    app.run(host='0.0.0.0',port=5000, debug=True)
