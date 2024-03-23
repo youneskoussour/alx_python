@@ -2,20 +2,59 @@ import csv
 import requests
 import sys
 
-user_id = str(sys.argv[1])
+def employee_info(employee_id):
+    """Retrieve employee details and tasks from the given URL."""
+    # Construct URLs for employee details and tasks
+    employee_url = f'https://jsonplaceholder.typicode.com/users/{employee_id}'
+    todos_url = f'https://jsonplaceholder.typicode.com/users/{employee_id}/todos'
 
-request_user = "https://jsonplaceholder.typicode.com/users/{}".format(user_id)
-request_todos = "https://jsonplaceholder.typicode.com/users/{}/todos".format(user_id)
+    # Make HTTP GET requests to fetch data
+    employee_response = requests.get(employee_url)
+    todos_response = requests.get(todos_url)
 
-data_user = requests.get(request_user).json()
-data_todos = requests.get(request_todos).json()
+    # Extract relevant information from the responses
+    employee_data = employee_response.json()
+    todos_data = todos_response.json()
 
-filename = f"{user_id}.csv"
+    # Initialize a list to store task details
+    tasks = []
 
-with open(filename, "w", newline="") as file:
-    csvwriter = csv.writer(file, quoting=csv.QUOTE_ALL)
-    for task in data_todos:
-        csvwriter.writerow(
-            [user_id, str(data_user["username"]), task["completed"], task["title"]]
+    # Extract task details
+    for task in todos_data:
+        task_details = (
+            employee_id,
+            employee_data['username'],
+            task['completed'],
+            task['title']
         )
-        
+        tasks.append(task_details)
+
+    """creating csv file for the empoyee"""
+    file_name = f"{employee_id}.csv"
+    with open(file_name, "w", newline='') as csv_file:
+        fieldnames = ['USER_ID', 'USERNAME', 'TASK_COMPLETED_STATUS', 'TASK_TITLE' ]
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+        """Write the csv headers"""
+        writer.writeheader()
+
+        """Write the rows under the epecified columns"""
+        for task in todos_data:
+            writer.writerow({
+                'USER_ID': employee_id,
+                'USERNAME': employee_data['username'],
+                'TASK_COMPLETED_STATUS': task['completed'],
+                'TASK_TITLE': task['title']
+            })
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python script_name.py employee_id.")
+        sys.exit(1)
+
+    # Extract employee ID from command-line argument
+    employee_id = int(sys.argv[1])
+
+    # Call the function to retrieve and record employee task details
+    employee_info(employee_id)

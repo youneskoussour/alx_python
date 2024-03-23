@@ -1,48 +1,44 @@
-"""
-Check student JSON output
-"""
-
+"""Import the needed modules in alphabetical order"""
 import json
 import requests
 import sys
 
-users_url = "https://jsonplaceholder.typicode.com/users?id="
-todos_url = "https://jsonplaceholder.typicode.com/todos"
+"""This function will take an employee's id as an argument and return a json file with the required details"""
+def get_employee_info(employee_id):
+    """Fetch the employee details from the given url by appending the employee_id and convert the data to json"""
+    employee_url = f'https://jsonplaceholder.typicode.com/users/{employee_id}'
+    employee_response = requests.get(employee_url)
+    employee_data = employee_response.json()
 
+    """fetch the employee's todo by appending the todo route to the url"""
+    todos_url = f'https://jsonplaceholder.typicode.com/users/{employee_id}/todos'
+    todos_response = requests.get(todos_url)
+    todos_data = todos_response.json()
 
-def user_info(id):
-    """ Check user info """
-    
-    with open(str(id) + '.json', 'r') as f:
-        student_json = json.load(f)
+    """create a json file for the employee with required format"""
+    json_file_path = f"{employee_id}.json"
+    json_data = {
+        f"{employee_id}": [
+            {
+                "task": task['title'],
+                "completed": task['completed'],
+                "username": employee_data['username']
+            }
+            for task in todos_data
+        ]
+    }
 
-    if student_json.get(str(id)) and len(student_json) == 1:
-        print("Correct USER_ID: OK")
-    else:
-        print("Correct USER_ID: Incorrect")
-
-    if isinstance(student_dicts, list) and all(isinstance(item, dict) for item in student_dicts):
-        print("USER_ID's value type is a list of dicts: OK")
-    else:
-        print("USER_ID's value type incorrect")
-
-
-    for i in response:
-        if i['userId'] == id:
-            usr_resp = requests.get(users_url + str(i['userId'])).json()
-            json_entry = {'username': usr_resp[0]['username'], 'completed': i['completed'], 'task': i['title']}
-            json_count += 1
-            flag = 0
-            for item in student_dicts:
-                if json_entry == item:
-                    flag = 1
-            if flag == 0:
-                not_found_count += 1
-
-    if not_found_count != 0:
-        print("Number of tasks missing: {}".format(not_found_count))
-    else:
-        print("All tasks found: OK")
-
+    """Write the json file with the required details"""
+    with open(json_file_path, 'w') as json_file:
+        json.dump(json_data, json_file, indent=2)
+"""Obtain the employees details from the command line using the sys module"""
 if __name__ == "__main__":
-    user_info(int(sys.argv[1]))
+    if len(sys.argv) != 2:
+        print("Usage: python script_name.py employee_id.")
+        sys.exit(1)
+
+    """Get the employee id from the second argument"""
+    employee_id = int(sys.argv[1])
+
+    """Call the function with the provided id"""
+    get_employee_info(employee_id)
